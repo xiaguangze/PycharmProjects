@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户首页</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="jquery.min.js"></script>
+</head>
+<body>
+<div id="search_div">
+    <label class="search-label">搜索：</label>
+    <input type="text" id="search_infor" class="search-input" placeholder="请输入姓名进行搜索">
+    <div class="btn-content">
+        <button type="submit" onclick="get_query()">查询</button>
+        <button type="reset" onclick="resetall()">重置</button>
+    </div>
+</div>
+<table id="container" border="1px solid #000;" cellspacing="0">
+    <thead>
+        <th>编号</th>
+        <th>姓名</th>
+        <th>年龄</th>
+        <th>性别</th>
+        <th class="wid_td">工作经历</th>
+        <th class="wid_td">评价</th>
+        <th style="width: 120px">操作</th>
+    </thead>
+    <tbody id="containerBody"></tbody>
+</table>
+<script>
+    function resetall() {
+        document.getElementById("search_infor").value="";
+        get_query()
+    }
+    function get_query() {
+        var user_id=document.getElementById("search_infor").value;
+        var url = "http://localhost:8081/getHumans";
+        $.ajax({
+            url: url, // 请求的URL
+            dataType: "json",  // 传递的数据类型
+            type: "POST",  // 请求的方式
+            /*
+            contentType: "application/json",
+             xhrFields: {
+              withCredentials: true // 代表是否需要携带cookie
+            },*/
+            data: {
+              "user_id": user_id,// data用来传参
+            },
+            success: function (data) { // 请求成功的响应
+                // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+                console.log("data", data);
+                var container = document.getElementById('containerBody');
+                container.innerHTML = '';
+                var t_infor = data.data;
+                if(t_infor.length){
+                    for(var i=0; i<t_infor.length; i++){
+                        var tr = document.createElement("tr");
+                        let tt = t_infor[i];
+                        for(var n=0; n<tt.length; n++) {
+                            var td1 = document.createElement("td");
+                            td1.innerText = tt[n];
+                            tr.appendChild(td1);
+                        }
+                        let td2 = document.createElement("td");
+                        td2.innerHTML = '<button>编辑</button>&nbsp;<button>删除</button>';
+                        $(td2).appendTo(tr);
+                        container.appendChild(tr);
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

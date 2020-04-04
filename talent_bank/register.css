@@ -1,0 +1,23 @@
+#regis_infor {
+    background: url("login_bg.jpg");
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 273px;
+    margin-top: 13%;
+    margin-left: 30%;
+}
+#regis_div {
+    padding: 50px 0 0 135px;
+    width: 700px;
+    height: 500px;
+    background: rgba(255,255,255,0.5);
+    line-height: 25px;
+}
+#regis_div span {
+    margin-left: -64px;
+}
+.cli_btn {
+    width: 100px;
+    height: 30px;
+    margin: 20px 100px 0 -2px;
+}

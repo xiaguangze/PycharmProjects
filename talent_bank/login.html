@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="jquery.min.js"></script>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div id="information">
+        <div id="infor">
+            <b>账号：</b><input type="text" id="username" placeholder="请输入账号"><br><br>
+            <b>密码：</b><input type="password" id="password" placeholder="请输入密码"><br><br>
+            <input class="cli_btn" type="submit" onclick="login()" value="登录">
+            <input class="cli_btn" type="button" onclick="regis()" value="注册">
+        </div>
+    </div>
+<script>
+    function regis() {
+        window.location.href="register.html"
+    }
+    function login() {
+        $.ajax({
+            url: "http://localhost:8081/login", // 请求的URL
+            dataType: "json",  // 传递的数据类型
+            type: "POST",  // 请求的方式
+            //contentType: "application/json;charset=utf-8",
+            xhrFields: {
+                withCredentials: true // 代表是否需要携带cookie
+            },
+            crossDomain: true,
+            data: {
+                "username": document.getElementById("username").value,// data用来传参
+                "password": document.getElementById("password").value,
+            },
+            success:
+                function (data) { // 请求成功的响应
+                // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+                console.log("data", data);
+                if(data.success == "1"){
+                    alert(data.message)
+                    window.location.href="index.html"
+                }
+                else {
+                    alert(data.message)
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

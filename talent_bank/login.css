@@ -1,0 +1,21 @@
+#information {
+    background: url("login_bg.jpg");
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 273px;
+    margin-top: 13%;
+    margin-left: 30%;
+}
+#infor {
+    padding: 50px 0 0 135px;
+    width: 700px;
+    height: 500px;
+    background: rgba(255,255,255,0.5);
+    line-height: 25px;
+}
+.cli_btn {
+    font-size: 20px;
+    width: 60px;
+    height: 30px;
+    margin: 0 100px 0 0;
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理人才</title>
+    <link rel="stylesheet" href="manageta.css">
+    <script src="jquery.min.js"></script>
+</head>
+<body>
+    <div id="manage_div">
+         <div  class="row"><span>姓名：</span><input type="text" id="name" class="input-default"></div>
+         <div  class="row"><span>年龄：</span><input type="number" id="age" class="input-default"></div>
+         <div  class="row"><span>性别：</span><input type="text" id="gender" class="input-default"></div>
+         <div  class="row"><span>联系方式：</span><input type="text" id="phone" class="input-default"></div>
+         <div  class="row"><span>工作经历：</span><textarea rows="3" id="experience" class="textarea-default"></textarea></div>
+         <div  class="row"><span>评价：</span><textarea rows="3" id="appraise" class="textarea-default"></textarea></div>
+    </div>
+    <div id="btn_div">
+        <input type="submit" onclick="create()" value="确定">
+        <input type="reset" onclick="reset_btn()" value="重置">
+        <input type="submit" onclick="go_back()" value="返回">
+    </div>
+    <script>
+        let name=document.getElementById("name");
+        let age=document.getElementById("age");
+        let gender=document.getElementById("gender");
+        let exper=document.getElementById("experience");
+        let appraise=document.getElementById("appraise");
+        let telephone=document.getElementById("phone");
+        function reset_btn() {
+            name.value="";
+            age.value="";
+            gender.value="";
+            exper.value="";
+            appraise.value="";
+            telephone.value="";
+        }
+        function go_back() {
+            window.location.href="index.html"
+        }
+        function create() {
+            if(!name.value){
+                alert("姓名不能为空");
+                return
+            }
+            if(!age.value){
+                alert("年龄不能为空");
+                return
+            }
+            if(!gender.value){
+                alert("性别不能为空");
+                return
+            }
+            if(!telephone.value){
+                alert("联系方式不能为空");
+                return
+            }
+            if(!exper.value){
+                alert("工作经历不能为空");
+                return
+            }
+            if(!appraise.value){
+                alert("评价不能为空");
+                return
+            }
+
+            $.ajax({
+                url: "http://localhost:8081/create", // 请求的URL
+                dataType: "json",  // 传递的数据类型
+                type: "POST",  // 请求的方式
+                //contentType: "application/json;charset=utf-8",
+                xhrFields: {
+                    withCredentials: true // 代表是否需要携带cookie
+                },
+                crossDomain: true,
+                data: {
+                    "name": name.value,// data用来传参
+                    "age": age.value,
+                    "gender": gender.value,
+                    "experience": exper.value,
+                    "appraise": appraise.value,
+                    "telephone": telephone.value
+                },
+                success:
+                    function (data) { // 请求成功的响应
+                    // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+                    console.log("data", data);
+                    if(data.success == "1"){
+                        alert(data.message);
+                        window.location.href="index.html"
+                    }
+                    else {
+                        alert(data.message)
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

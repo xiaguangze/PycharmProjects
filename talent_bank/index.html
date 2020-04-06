@@ -13,6 +13,7 @@
     <div class="btn-content">
         <button type="submit" onclick="get_query()">查询</button>
         <button type="reset" onclick="resetall()">重置</button>
+        <button type="button" onclick="new_talent()">新建</button>
     </div>
 </div>
 <table id="container" border="1px solid #000;" cellspacing="0">
@@ -23,11 +24,14 @@
         <th>性别</th>
         <th class="wid_td">工作经历</th>
         <th class="wid_td">评价</th>
+        <th style="width: 150px">联系方式</th>
         <th style="width: 120px">操作</th>
     </thead>
     <tbody id="containerBody"></tbody>
 </table>
+<div id="new_create"></div>
 <script>
+    window.onload=get_query();
     function resetall() {
         document.getElementById("search_infor").value="";
         get_query()
@@ -70,6 +74,9 @@
                 }
             }
         });
+    }
+    function new_talent() {
+        window.location.href="manageta.html"
     }
 </script>
 

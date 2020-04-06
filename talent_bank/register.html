@@ -26,45 +26,46 @@
     var repassword=document.getElementById("repasswd").value;
     if(!username){
       alert("用户名不能为空");
-      return;
+      return
     }
     if(!password){
       alert("密码不能为空");
       return
     }
     if(!repassword){
-      alert("确认密码不能为空")
+      alert("确认密码不能为空");
       return
     }
     if (password !== repassword){
-      alert("两次密码不相同")
+      alert("两次密码不相同");
+      return
     }
     $.ajax({
-      url: "http://localhost:8081/register", // 请求的URL
-      dataType: "json",  // 传递的数据类型
-      type: "POST",  // 请求的方式
-      //contentType: "application/json;charset=utf-8",
-      xhrFields: {
-          withCredentials: true // 代表是否需要携带cookie
-      },
-      crossDomain: true,
-      data: {
-          "username": username,// data用来传参
-          "password": password,
-      },
-      success:
-        function (data) { // 请求成功的响应
-          // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
-          console.log("data", data);
-          if(data.success == "1"){
-              alert(data.message)
-              window.location.href="login.html"
-          }
-          else {
-              alert(data.message)
-          }
+        url: "http://localhost:8081/register", // 请求的URL
+        dataType: "json",  // 传递的数据类型
+        type: "POST",  // 请求的方式
+        //contentType: "application/json;charset=utf-8",
+        xhrFields: {
+            withCredentials: true // 代表是否需要携带cookie
+        },
+        crossDomain: true,
+        data: {
+            "username": username,// data用来传参
+            "password": password,
+        },
+        success:
+            function (data) { // 请求成功的响应
+            // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+            console.log("data", data);
+            if(data.success == "1"){
+                alert(data.message)
+                window.location.href="login.html"
+            }
+            else {
+                alert(data.message)
+            }
         }
-      });
+    });
 }
 </script>
 </body>

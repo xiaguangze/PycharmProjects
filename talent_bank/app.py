@@ -75,6 +75,28 @@ def gethumans():
     return make_response(res)
 
 
+@app.route("/create", methods=["POST"])
+def create():
+    in_name = request.form["name"]
+    in_age = request.form["age"]
+    in_gender = request.form["gender"]
+    in_experience = request.form["experience"]
+    in_appraise = request.form["appraise"]
+    in_telephone = request.form["telephone"]
+    sql = "insert into talents(name,age,gender,experience,appraise,telephone) values('%s','%s','%s','%s','%s','%s')" % (in_name, in_age, in_gender, in_experience, in_appraise, in_telephone)
+    db = pymysql.connect(host="localhost", user="root", password="root", db="talent_bank", port=3306)
+    cur = db.cursor()
+    try:
+        cur.execute(sql)
+        res = jsonify({"success": 1, "message": "人才新建成功"})
+    except:
+        res = jsonify({"success": 0, "message": "人才新建失败"})
+    finally:
+        cur.close()
+
+    return make_response(res)
+
+
 if __name__ == "__main__":
     app.run(port=8081, debug=True)
 

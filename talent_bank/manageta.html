@@ -27,6 +27,31 @@
         let exper=document.getElementById("experience");
         let appraise=document.getElementById("appraise");
         let telephone=document.getElementById("phone");
+        let params = urlToObj(window.location.href);
+        if(params && params.id){
+            $.ajax({
+                url: "http://localhost:8081/update/" + params.id,
+                dataType: "json",
+                type: "GET",
+                crossDomain: true,
+                success: function (data) { // 请求成功的响应
+                    // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+                    console.log("data", data);
+                    var tdata = data.data;
+                    if(data.success==1){
+                        document.getElementById("name").value=tdata[1];
+                        document.getElementById("age").value=tdata[2];
+                        document.getElementById("gender").value=tdata[3];
+                        document.getElementById("experience").innerText=tdata[4];
+                        document.getElementById("appraise").innerText=tdata[5];
+                        document.getElementById("phone").value=tdata[6];
+                    }else {
+                        alert("人才查询失败，请确认是否存在");
+                        window.location.href="index.html"
+                    }
+                }
+            })
+        }
         function reset_btn() {
             name.value="";
             age.value="";
@@ -63,38 +88,71 @@
                 alert("评价不能为空");
                 return
             }
-
+            var t_data={
+                        "name": name.value,
+                        "age": age.value,
+                        "gender": gender.value,
+                        "experience": exper.value,
+                        "appraise": appraise.value,
+                        "telephone": telephone.value
+                    };
+            if(params && params.id){
+                t_data = Object.assign(t_data, {"id": params.id})
+            }
             $.ajax({
-                url: "http://localhost:8081/create", // 请求的URL
-                dataType: "json",  // 传递的数据类型
-                type: "POST",  // 请求的方式
-                //contentType: "application/json;charset=utf-8",
-                xhrFields: {
-                    withCredentials: true // 代表是否需要携带cookie
-                },
-                crossDomain: true,
-                data: {
-                    "name": name.value,// data用来传参
-                    "age": age.value,
-                    "gender": gender.value,
-                    "experience": exper.value,
-                    "appraise": appraise.value,
-                    "telephone": telephone.value
-                },
-                success:
-                    function (data) { // 请求成功的响应
-                    // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
-                    console.log("data", data);
-                    if(data.success == "1"){
-                        alert(data.message);
-                        window.location.href="index.html"
+                    url: "http://localhost:8081/new_talent", // 请求的URL
+                    dataType: "json",  // 传递的数据类型
+                    type: "POST",  // 请求的方式
+                    //contentType: "application/json;charset=utf-8",
+                    xhrFields: {
+                        withCredentials: true // 代表是否需要携带cookie
+                    },
+                    crossDomain: true,
+                    data: t_data,
+                    success:
+                        function (data) { // 请求成功的响应
+                        // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+                        console.log("data", data);
+                        if(data.success == "1"){
+                            alert(data.message);
+                            window.location.href="index.html"
+                        }
+                        else {
+                            alert(data.message)
+                        }
                     }
-                    else {
-                        alert(data.message)
-                    }
-                }
-            });
+                })
         }
+        /*
+        获取url中的id
+         */
+        function urlToObj(url) {
+        // 判断入参
+        const reg_url = /^[^\?]+\?([\w\W]+)$/;
+        const reg_para = /([^&=]+)=([\w\W]*?)(&|$)/g; // g is very important
+        const arr_url = reg_url.exec(url);
+        const urlObj = {};
+        // 如果是地址形式
+        if (arr_url && arr_url[1]) {
+            const str_para = arr_url[1];
+            let result;
+            while ((result = reg_para.exec(str_para)) != null) {
+                urlObj[result[1]] = result[2];
+            }
+        } else {
+            // 如果是拼接形式
+            const string = url.split('&');
+            const res = {};
+            for (let i = 0; i < string.length; i++) {
+                const str = string[i].split('=');
+                if (str[0] !== '') {
+                    res[str[0]] = str[1];
+                }
+            }
+            return res;
+        }
+        return urlObj;
+    }
     </script>
 </body>
 </html>

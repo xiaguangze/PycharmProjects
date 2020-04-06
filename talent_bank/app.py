@@ -57,10 +57,11 @@ def register():
 
 @app.route("/getHumans", methods=["POST"])
 def gethumans():
-    if request.form["user_id"] == "":
+    if request.form["name"] == "":
         sql = "select * from talents;"
     else:
-        sql = "select * from talents where id = '%s'" % request.form["user_id"]
+        name = "%" + "%s" % request.form["name"] + "%"
+        sql = "select * from talents where name like '%s'" % name
     db = pymysql.connect(host="localhost", user="root", password="root", db="talent_bank", port=3306)
     cur = db.cursor()
     try:
@@ -68,14 +69,14 @@ def gethumans():
         humans = cur.fetchall()
         res = jsonify({"success": 1, "message": "成功", "data": humans})
     except Exception as e:
-        raise e
+        res = jsonify({"success": 1, "message": "失败"})
     finally:
         cur.close()
 
     return make_response(res)
 
 
-@app.route("/create", methods=["POST"])
+@app.route("/new_talent", methods=["POST"])
 def create():
     in_name = request.form["name"]
     in_age = request.form["age"]
@@ -83,18 +84,58 @@ def create():
     in_experience = request.form["experience"]
     in_appraise = request.form["appraise"]
     in_telephone = request.form["telephone"]
-    sql = "insert into talents(name,age,gender,experience,appraise,telephone) values('%s','%s','%s','%s','%s','%s')" % (in_name, in_age, in_gender, in_experience, in_appraise, in_telephone)
+    if request.form["id"]:
+        in_id=request.form["id"]
+        sql = "update talents set name='%s',age=%s,gender='%s',experience='%s',appraise='%s',telephone='%s' where id=%s;"%(in_name, in_age, in_gender, in_experience, in_appraise, in_telephone, in_id)
+    else:
+        sql = "insert into talents(name,age,gender,experience,appraise,telephone) values('%s',%d,'%s','%s','%s','%s')" % (
+        in_name, in_age, in_gender, in_experience, in_appraise, in_telephone)
     db = pymysql.connect(host="localhost", user="root", password="root", db="talent_bank", port=3306)
     cur = db.cursor()
     try:
         cur.execute(sql)
-        res = jsonify({"success": 1, "message": "人才新建成功"})
+        res = jsonify({"success": 1, "message": "成功"})
     except:
-        res = jsonify({"success": 0, "message": "人才新建失败"})
+        res = jsonify({"success": 0, "message": "失败"})
     finally:
         cur.close()
 
     return make_response(res)
+
+
+@app.route("/del_talent", methods=["POST"])
+def del_talent():
+    t_id = request.form["talentid"]
+    sql = "delete from talents where id = %s" % (t_id)
+    db = pymysql.connect(host="localhost", user="root", password="root", db="talent_bank", port=3306)
+    cur = db.cursor()
+    try:
+        cur.execute(sql)
+        res = jsonify({"success": 1, "message": "人才删除成功"})
+    except:
+        res = jsonify({"success": 0, "message": "人才删除失败"})
+    finally:
+        cur.close()
+
+    return make_response(res)
+
+
+@app.route("/update/<int:talentid>", methods=["GET"])
+def update(talentid):
+    t_id = talentid
+    sql = "select * from talents where id=%s" % t_id
+    db = pymysql.connect(host="localhost", user="root", password="root", db="talent_bank", port=3306)
+    cur = db.cursor()
+    try:
+        cur.execute(sql)
+        human = cur.fetchall()[0]
+        res = jsonify({"success": 1, "message": "成功", "data": human})
+    except:
+        res = jsonify({"success": 0, "message": "失败"})
+    finally:
+        cur.close()
+    return make_response(res)
+
 
 
 if __name__ == "__main__":

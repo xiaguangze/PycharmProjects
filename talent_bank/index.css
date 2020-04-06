@@ -40,3 +40,7 @@
 .wid_td {
     width: 400px !important;
 }
+.no_data {
+    text-align: center;
+    padding: 20px;
+}

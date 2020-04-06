@@ -9,7 +9,7 @@
 <body>
 <div id="search_div">
     <label class="search-label">搜索：</label>
-    <input type="text" id="search_infor" class="search-input" placeholder="请输入姓名进行搜索">
+    <input type="text" id="search_infor" class="search-input" placeholder="请输入姓名进行搜索" onclick="get_query()">
     <div class="btn-content">
         <button type="submit" onclick="get_query()">查询</button>
         <button type="reset" onclick="resetall()">重置</button>
@@ -36,20 +36,22 @@
         document.getElementById("search_infor").value="";
         get_query()
     }
+    function deleteFn(id) {
+        console.log('id', id)
+    }
+    function new_talent() {
+        window.location.href="manageta.html"
+    }
     function get_query() {
-        var user_id=document.getElementById("search_infor").value;
+        var tname=document.getElementById("search_infor").value;
         var url = "http://localhost:8081/getHumans";
         $.ajax({
             url: url, // 请求的URL
             dataType: "json",  // 传递的数据类型
             type: "POST",  // 请求的方式
-            /*
-            contentType: "application/json",
-             xhrFields: {
-              withCredentials: true // 代表是否需要携带cookie
-            },*/
+            crossDomain: true,
             data: {
-              "user_id": user_id,// data用来传参
+              "name": tname,// data用来传参
             },
             success: function (data) { // 请求成功的响应
                 // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
@@ -57,28 +59,58 @@
                 var container = document.getElementById('containerBody');
                 container.innerHTML = '';
                 var t_infor = data.data;
-                if(t_infor.length){
-                    for(var i=0; i<t_infor.length; i++){
+                if (t_infor.length) {
+                    for (var i = 0; i < t_infor.length; i++) {
                         var tr = document.createElement("tr");
                         let tt = t_infor[i];
-                        for(var n=0; n<tt.length; n++) {
+                        for (var n = 0; n < tt.length; n++) {
                             var td1 = document.createElement("td");
-                            td1.innerText = tt[n];
+                            if (n == 0) {
+                                td1.innerText = i + 1;
+                            }
+                            else {
+                                td1.innerText = tt[n];
+                            }
                             tr.appendChild(td1);
                         }
                         let td2 = document.createElement("td");
-                        td2.innerHTML = '<button>编辑</button>&nbsp;<button>删除</button>';
+                        td2.innerHTML = `<button class="edit_btn" data-id="${tt[0]}">编辑</button>&nbsp;<button class="del-btn" data-id='${tt[0]}'>删除</button>`;
                         $(td2).appendTo(tr);
                         container.appendChild(tr);
                     }
+                    $('#containerBody').on('click', '.del-btn', function () {
+                        // console.log('333', $(this).data('id'))
+                        var conresult = confirm("是否删除");
+                        if (conresult) {
+                            $.ajax({
+                                url: "http://localhost:8081/del_talent", // 请求的URL
+                                dataType: "json",  // 传递的数据类型
+                                type: "POST",  // 请求的方式
+                                crossDomain: true,
+                                data: {
+                                    "talentid": $(this).data('id'),// data用来传参
+                                },
+                                success: function (data) { // 请求成功的响应
+                                    // data 代表的是 从后端请求过来的数据，一般格式为{code: 0, data:{}, message: ‘成功’}
+                                    console.log("data", data);
+                                    alert(data.message);
+                                    get_query();
+                                }
+                            })
+                        }
+                    });
+                    $('#container').on('click', '.edit_btn', function () {
+                        // console.log('333', $(this).data('id'));
+                        var id = $(this).data('id');
+                        window.location.href=`manageta.html?id=${id}`
+                    })
+                }
+                else {
+                    container.innerHTML="<th colspan='8'>暂无数据！</th>"
                 }
             }
-        });
-    }
-    function new_talent() {
-        window.location.href="manageta.html"
+        })
     }
 </script>
-
 </body>
 </html>
